@@ -4531,11 +4531,14 @@ const WORDS = [];
   }
 }
 
+const ALL_BOOK = "전체";
 const BOOKS = [...new Set(WORDS.map(w => w.book))];
+const BOOK_OPTIONS = [ALL_BOOK, ...BOOKS];
 const UNITS_BY_BOOK = {};
 for (const b of BOOKS) {
   UNITS_BY_BOOK[b] = [...new Set(WORDS.filter(w => w.book === b).map(w => w.unit))];
 }
+UNITS_BY_BOOK[ALL_BOOK] = [...new Set(WORDS.map(w => w.unit))];
 
 /* ---------- Persistence ---------- */
 const LS_KEY = "vocabStudyProgressV1";
@@ -4628,27 +4631,21 @@ function showKiwi() {
     <div class="kiwiCard">
       <div class="kiwiBird">
         <svg width="150" height="150" viewBox="0 0 200 200">
-          <ellipse cx="60" cy="150" rx="10" ry="3" fill="#000" opacity=".12"/>
-          <path d="M78 150 Q76 165 70 172" stroke="#4a3220" stroke-width="6" stroke-linecap="round" fill="none"/>
-          <path d="M104 150 Q107 165 113 172" stroke="#4a3220" stroke-width="6" stroke-linecap="round" fill="none"/>
-          <path d="M65 172 L58 176 M70 172 L70 178 M75 172 L80 176" stroke="#4a3220" stroke-width="4" stroke-linecap="round"/>
-          <path d="M108 172 L101 176 M113 172 L113 178 M118 172 L125 176" stroke="#4a3220" stroke-width="4" stroke-linecap="round"/>
-          <ellipse cx="92" cy="118" rx="58" ry="50" fill="#9C6B3E"/>
-          <ellipse cx="92" cy="118" rx="58" ry="50" fill="none" stroke="#7A5230" stroke-width="1.5" opacity=".25"/>
-          <g fill="#7A5230" opacity=".45">
-            <circle cx="70" cy="100" r="2.2"/><circle cx="95" cy="92" r="2"/><circle cx="118" cy="104" r="2.3"/>
-            <circle cx="60" cy="120" r="2"/><circle cx="88" cy="128" r="2.4"/><circle cx="112" cy="132" r="2"/>
-            <circle cx="132" cy="118" r="2.1"/><circle cx="75" cy="145" r="1.8"/><circle cx="105" cy="148" r="2"/>
-          </g>
-          <ellipse cx="140" cy="112" rx="14" ry="22" fill="#845A34" opacity=".8"/>
-          <circle cx="45" cy="90" r="26" fill="#9C6B3E"/>
-          <path d="M14 88 Q-10 84 -6 94 Q-10 104 14 96 Z" fill="#3D2A18"/>
-          <circle cx="38" cy="83" r="4.2" fill="#20140B"/>
-          <circle cx="39.3" cy="81.5" r="1.3" fill="#fff"/>
-          <path d="M28 70 Q35 62 44 66" stroke="#7A5230" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+          <path d="M92 178 L88 202 L76 209" fill="none" stroke="#161616" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M122 178 L127 202 L140 208" fill="none" stroke="#161616" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M70 55 C95 40 130 38 152 55 C172 68 178 92 172 118 C168 148 150 178 118 190 C90 200 58 192 42 168 C28 148 30 115 40 92 C46 75 55 62 70 55 Z"
+                fill="#D9AD8E" stroke="#161616" stroke-width="7" stroke-linejoin="round"/>
+          <path d="M42 108 C18 103 6 111 4 118 C6 125 20 132 44 122 Z" fill="#F1E1A4" stroke="#161616" stroke-width="6" stroke-linejoin="round"/>
+          <circle cx="73" cy="86" r="5.5" fill="#161616"/>
+          <circle cx="96" cy="79" r="5.5" fill="#161616"/>
+          <path d="M56 150 L104 137 L104 187 L56 183 Z" fill="#3E6B4A" stroke="#161616" stroke-width="6.5" stroke-linejoin="round"/>
+          <path d="M152 150 L104 137 L104 187 L152 183 Z" fill="#3E6B4A" stroke="#161616" stroke-width="6.5" stroke-linejoin="round"/>
+          <path d="M97 140 L104 132 L111 140 L104 147 Z" fill="#F5F2E8"/>
+          <circle cx="55" cy="168" r="5" fill="#161616"/>
+          <circle cx="153" cy="168" r="5" fill="#161616"/>
         </svg>
       </div>
-      <div class="kiwiLabel">키위 새 등장! 🥝</div>
+      <div class="kiwiLabel">책 읽는 키위새 등장! 🥝</div>
     </div>
   `;
   overlay.classList.add("show");
@@ -4659,7 +4656,7 @@ function showKiwi() {
 /* ---------- State ---------- */
 const state = {
   view: "learn",
-  book: BOOKS[0],
+  book: ALL_BOOK,
   unit: "ALL",
   search: "",
   deckOrder: [],
@@ -4688,7 +4685,7 @@ const unitBars = document.getElementById("unitBars");
 
 /* ---------- Deck selectors ---------- */
 function populateBookSel() {
-  bookSel.innerHTML = BOOKS.map(b => `<option value="${escapeAttr(b)}">${escapeHtml(b)}</option>`).join("");
+  bookSel.innerHTML = BOOK_OPTIONS.map(b => `<option value="${escapeAttr(b)}">${escapeHtml(b)}</option>`).join("");
   bookSel.value = state.book;
 }
 function populateUnitSel() {
@@ -4726,7 +4723,7 @@ searchInput.addEventListener("keydown", (e) => {
 });
 
 function currentPool() {
-  let pool = WORDS.filter(w => w.book === state.book);
+  let pool = state.book === ALL_BOOK ? WORDS : WORDS.filter(w => w.book === state.book);
   if (state.unit !== "ALL") pool = pool.filter(w => w.unit === state.unit);
   if (state.search) {
     pool = pool.filter(w =>
@@ -4993,7 +4990,7 @@ function renderList() {
 
 /* ---------- Stats ---------- */
 function renderStats() {
-  const allForBook = WORDS.filter(w => w.book === state.book);
+  const allForBook = state.book === ALL_BOOK ? WORDS : WORDS.filter(w => w.book === state.book);
   let good = 0, learn = 0, bad = 0;
   for (const w of allForBook) {
     const s = statusOf(w.id);
@@ -5008,7 +5005,7 @@ function renderStats() {
   `;
   const units = UNITS_BY_BOOK[state.book] || [];
   unitBars.innerHTML = units.map(u => {
-    const words = WORDS.filter(w => w.book === state.book && w.unit === u);
+    const words = state.book === ALL_BOOK ? WORDS.filter(w => w.unit === u) : WORDS.filter(w => w.book === state.book && w.unit === u);
     const g = words.filter(w => statusOf(w.id) === "good").length;
     const pct = words.length ? Math.round((g / words.length) * 100) : 0;
     return `<div class="unitbar">
