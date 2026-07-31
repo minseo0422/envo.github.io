@@ -181,8 +181,6 @@ a{color:var(--accent);}
   display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:28px;
   background-image:var(--paper-tex, none);background-size:220px 220px;
 }
-.bookmark-star{position:absolute;top:16px;right:18px;width:20px;height:20px;color:var(--ink-faint);opacity:.55;display:none;}
-:root[data-palette="blue"] .bookmark-star{display:block;}
 .face.back{transform:rotateY(180deg);background:linear-gradient(165deg,var(--surface),var(--surface-2));}
 .tag{position:absolute;top:16px;left:18px;font-size:11px;font-weight:700;color:var(--ink-faint);letter-spacing:.05em;text-transform:uppercase;}
 .hint{position:absolute;bottom:16px;font-size:11.5px;color:var(--ink-faint);letter-spacing:.02em;}
@@ -197,8 +195,9 @@ a{color:var(--accent);}
 .meaning-word{margin-top:14px;font-size:13.5px;color:var(--ink-muted);font-family:var(--serif);font-style:italic;}
 
 .judgerow{display:flex;gap:10px;width:100%;max-width:520px;}
-.jbtn{flex:1;min-height:52px;border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:14px 10px;border-radius:var(--radius-md);font-size:14px;font-weight:700;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;transition:transform .12s ease, background-color .15s ease, border-color .15s ease;box-shadow:var(--jbtn-shadow, none);}
-.jicon{width:22px;height:22px;display:none;}
+.jbtn{flex:1;height:72px;border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:8px 6px;border-radius:var(--radius-md);font-size:14px;font-weight:700;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;transition:transform .12s ease, background-color .15s ease, border-color .15s ease;box-shadow:var(--jbtn-shadow, none);}
+.jicon{width:19px;height:19px;display:none;flex:0 0 auto;}
+.jicon-label{font-size:12.5px;}
 .jicon-label{display:none;}
 :root[data-palette="blue"] .jicon{display:block;}
 :root[data-palette="blue"] .jicon-label{display:block;}
@@ -301,14 +300,13 @@ tr:hover td{background:var(--surface-2);}
 .decor .deco-note{font-family:var(--hand);font-size:27px;color:var(--ink);opacity:.75;line-height:1.25;}
 .decor .deco-star{margin-left:6px;color:var(--accent);font-size:18px;display:inline-block;transform:rotate(12deg);}
 
-.decor-cream .deco-tape{
-  position:absolute;top:15%;right:7%;width:118px;height:32px;
-  background:repeating-linear-gradient(45deg, rgba(201,138,46,.22) 0 6px, rgba(201,138,46,.34) 6px 12px), #F1E2BE;
-  opacity:.9;transform:rotate(9deg);border-radius:2px;
-  box-shadow:0 6px 14px -6px rgba(90,60,10,.35);
+.decor-cream .deco-tape-plant{
+  position:absolute;top:56%;right:6%;width:190px;height:auto;
+  -webkit-mask-image:radial-gradient(closest-side, #000 58%, transparent 100%);
+  mask-image:radial-gradient(closest-side, #000 58%, transparent 100%);
+  filter:drop-shadow(0 10px 16px rgba(90,60,10,.18));
 }
-.decor-cream .deco-plant{position:absolute;top:16.5%;right:9.5%;width:76px;height:auto;transform:rotate(6deg);}
-.decor-cream .deco-note{position:absolute;top:36%;right:5%;max-width:150px;transform:rotate(-3deg);}
+.decor-cream .deco-note{position:absolute;top:76%;right:9%;max-width:150px;transform:rotate(-3deg);}
 
 .decor-blue .deco-circle{position:absolute;border-radius:50%;background:radial-gradient(circle at 35% 30%, color-mix(in srgb, var(--accent) 22%, transparent), transparent 70%);}
 .decor-blue .deco-circle-a{top:7%;right:3%;width:280px;height:280px;}
@@ -410,16 +408,7 @@ tr:hover td{background:var(--surface-2);}
 
 <!-- Decorative stationery layer (cream palette) -->
 <div class="decor decor-cream" aria-hidden="true">
-  <div class="deco-tape"></div>
-  <svg class="deco-plant" viewBox="0 0 90 130" fill="none">
-    <path d="M20 125 C18 90 24 60 40 40 C50 27 58 18 60 5" stroke="#7C9473" stroke-width="3" stroke-linecap="round"/>
-    <path d="M40 40 C30 34 20 34 12 42" stroke="#7C9473" stroke-width="3" stroke-linecap="round"/>
-    <path d="M45 30 C50 22 60 20 68 24" stroke="#7C9473" stroke-width="3" stroke-linecap="round"/>
-    <ellipse cx="10" cy="40" rx="10" ry="6" transform="rotate(-28 10 40)" fill="#8FA97E"/>
-    <ellipse cx="70" cy="22" rx="10" ry="6" transform="rotate(24 70 22)" fill="#9CB98A"/>
-    <ellipse cx="60" cy="4" rx="8" ry="5" transform="rotate(-10 60 4)" fill="#8FA97E"/>
-    <ellipse cx="33" cy="55" rx="9" ry="5.5" transform="rotate(-46 33 55)" fill="#9CB98A"/>
-  </svg>
+  <img class="deco-tape-plant" src="assets/tape-plant.png" alt="" />
   <div class="deco-note">오늘도 한 걸음씩!<span class="deco-star">★</span></div>
 </div>
 
@@ -4950,14 +4939,12 @@ function renderLearn() {
     <div class="cardwrap">
       <div class="card${state.cardFlipped ? " flipped" : ""}" id="flashcard">
         <div class="face front">
-          <svg class="bookmark-star" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M12 3l2.6 5.6 6.1.7-4.5 4.2 1.2 6-5.4-3-5.4 3 1.2-6L3.3 9.3l6.1-.7Z"/></svg>
           <span class="tag">단어</span>
           <div class="word">${escapeHtml(w.word)}</div>
           <span class="hint hint-desktop">클릭하거나 스페이스바를 눌러 뜻 보기</span>
           <span class="hint hint-mobile">탭하여 뜻 보기</span>
         </div>
         <div class="face back">
-          <svg class="bookmark-star" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M12 3l2.6 5.6 6.1.7-4.5 4.2 1.2 6-5.4-3-5.4 3 1.2-6L3.3 9.3l6.1-.7Z"/></svg>
           <span class="tag">뜻</span>
           <div class="meaning">${escapeHtml(w.meaning)}</div>
           <div class="meaning-word">${escapeHtml(w.word)}</div>
